@@ -37,8 +37,7 @@ I'm not sure why supergfxctl doesn't do the trick at the moment as I thought the
 
 - remove `supergfxctl / gpu-manager / optimus-manager or what not`
 - check for remaining files in `/etc/modprobe.d/` with `nvidia` references
-- `git clone https://github.com/hyphone/asus-g14-fedora.git`
-- `git checkout old-switching`
-- `cd asus-g14-fedora`
+- `git clone https://github.com/hyphone/asus-x13-gpu-switching.git`
+- `cd asus-x13-gpu-switching`
 - `sudo ./install` to install the scripts and services
 - `systemctl start asusgpuswitch` to switch between hybrid and integrated
