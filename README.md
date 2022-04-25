@@ -35,8 +35,9 @@ I'm not sure why supergfxctl doesn't do the trick at the moment as I thought the
 
 ## How to use
 
-- remove `supergfxctl / gpu-manager / optimus-manager or what not`
-- check for remaining files in `/etc/modprobe.d/` with `nvidia` references
+- remove `supergfxctl / gpu-manager / optimus-manager` or whatever you might use for switching GPU modes
+- check for remaining files in `/etc/modprobe.d/` with `nvidia` references, back them up and **delete them**
+- check for remaining files in `/etc/modules-load.d/` with `nvidia` references, back them up and **delete them**
 - `git clone https://github.com/hyphone/asus-x13-gpu-switching.git`
 - `cd asus-x13-gpu-switching`
 - `sudo ./install` to install the scripts and services
