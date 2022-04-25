@@ -6,20 +6,20 @@ This is a draft on what works for the ASUS X13 to turn off the dGPU completely (
 
 ### `supergfxctl -m integrated` does not work
 
-- dGPU not in device tree (do be expected)
-- dGPU **still consuming power** (> 20W)
+- dGPU is on and **still consuming power** (> 20W, ney)
+- dGPU not in device tree (to be expected)
 
 ### `\_SB.PCI0.GPP0.PG00._OFF > /proc/acpi/call` does not work
 
 - dGPU is off (yay)
 - dGPU still in device tree (not removed)
-- **system crashes** (after lspci or the system requests the GPUs, like when launching apps)
+- **system crashes** (ney - after lspci or the system requests the GPUs, like when launching apps)
 
 ### `echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove` manually works
 
 - dGPU is off (yay)
-- dGPU not in device tree (do be expected)
-- system is stable
+- dGPU not in device tree (to be expected)
+- system is stable (yay)
 
 ## Thoughts
 
