@@ -1,17 +1,20 @@
 #!/bin/bash
 
 GPUFILE=/etc/asus_nvidia
+GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
 
 if [ -f $GPUFILE ]; then
   echo "$GPUFILE exists."
-  GPUFILEPRESENT=true
-else
-  echo "$GPUFILE does not exist."
-  GPUFILEPRESENT=false
-fi
-
-if [ $GPUFILEPRESENT = "true" ]; then
+  
   echo "activating and loading Nvidia"
+
+  if [ $GPUDISABLED = "1" ]; then
+    echo "asus-nb-wmi/dgpu_disable is set, enabling..."
+    echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
+
+    sleep 30
+  fi;
+
   modprobe nvidia_uvm
   modprobe nvidia_drm
   modprobe nvidia_modeset
@@ -20,7 +23,14 @@ if [ $GPUFILEPRESENT = "true" ]; then
   echo "setting nvidia power/control auto"
   echo 'auto' > /sys/bus/pci/devices/0000\:01\:00.0/power/control
 else
+  echo "$GPUFILE does not exist."
+
   echo "deactivating nvidia"
+
+  if [ $GPUDISABLED = "1" ]; then
+    echo "asus-nb-wmi/dgpu_disable is set, nothing to do..."
+  fi;
+
+  echo "removing Nvidia from device tree"
   echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
-  # sh -c 'echo "\\_SB.PCI0.GPP0.PG00._OFF" > /proc/acpi/call'
 fi
