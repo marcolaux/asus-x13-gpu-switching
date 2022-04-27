@@ -2,6 +2,7 @@
 
 GPUFILE=/etc/asus_nvidia
 GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
+GPUADDRESS="0000:01:00.0"
 
 if [ -f $GPUFILE ]; then
   systemctl stop display-manager
@@ -22,11 +23,14 @@ if [ -f $GPUFILE ]; then
     sleep 30
   fi;
 
-  echo "acpi_call to power off the dGPU"
-  # sh -c 'echo "\\_SB.PCI0.GPP0.PG00._OFF" > /proc/acpi/call'
-  echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
+  if [ -d "/sys/bus/pci/devices/$GPUADDRESS/" ]; then
+    echo "dGPU in device tree, removing..."
 
-  sleep 1
+    echo "removing Nvidia from device tree"
+    echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
+
+    sleep 1
+  fi;
 
   echo "removing /etc/asus_nvidia"
   rm /etc/asus_nvidia
