@@ -2,6 +2,12 @@
 
 GPUFILE=/etc/asus_nvidia
 GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
+GPUADDRESS="0000:01:00.0"
+
+if [ -d "/sys/bus/pci/devices/0000:01:00.0/" ]; then
+  echo "bla"
+fi;
+exit
 
 if [ -f $GPUFILE ]; then
   echo "$GPUFILE exists."
@@ -31,6 +37,10 @@ else
     echo "asus-nb-wmi/dgpu_disable is set, nothing to do..."
   fi;
 
-  echo "removing Nvidia from device tree"
-  echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
+  if [ -d "/sys/bus/pci/devices/$GPUADDRESS/" ]; then
+    echo "dGPU in device tree (shouldn't be), removing..."
+
+    echo "removing Nvidia from device tree"
+    echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
+  fi;
 fi
