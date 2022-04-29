@@ -1,73 +1,51 @@
 #!/bin/bash
 
-GPUFILE=/etc/asus_nvidia
 GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
-GPUADDRESS="0000:01:00.0"
 
-if [ -f $GPUFILE ]; then
+if [ $GPUDISABLED = "0" ]; then
+  echo "stopping DM"
+
   systemctl stop display-manager
-  sleep 1
+  sleep 5
 
   echo "removing nvidia kernel modules"
   rmmod nvidia_uvm
   rmmod nvidia_drm
   rmmod nvidia_modeset
   rmmod nvidia
-
   sleep 1
-
-  if [ $GPUDISABLED = "0" ]; then
-    echo "asus-nb-wmi/dgpu_disable is not set, setting it to 1..."
-    echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-
-    sleep 30
-  fi;
-
-  if [ -d "/sys/bus/pci/devices/$GPUADDRESS/" ]; then
-    echo "dGPU in device tree, removing..."
-
-    echo "removing Nvidia from device tree"
-    echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
-
-    sleep 1
-  fi;
-
-  echo "removing /etc/asus_nvidia"
-  rm /etc/asus_nvidia
+  
+  # no effect on dynamic power management later
+  # thought it might have when not "properly" removed
+  # echo 1 > /sys/devices/pci0000:00/0000:00:01.0/remove
+  # echo 1 > /sys/devices/pci0000:00/0000:00:01.1/remove
+  # sleep 1
+  
+  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
+  sleep 1
+    
+  echo "rescanning bus"
+  echo 1 > /sys/bus/pci/rescan
+  sleep 1
 
   echo "restarting display manager"
   systemctl restart display-manager.service
 else
-  echo "$GPUFILE does not exist"
-
-  echo "set to Nvidia mode flag and restart the display manager"
-
-  echo "stopping the display-manager"
+  echo "stopping DM"
   systemctl stop display-manager.service
+  sleep 5
+
+  echo "asus-nb-wmi/dgpu_disable is set, enabling..."
+  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
   sleep 1
-
-  if [ $GPUDISABLED = "1" ]; then
-    echo "asus-nb-wmi/dgpu_disable is set, enabling..."
-    echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-
-    sleep 30
-  fi;
-
+    
   echo "rescanning bus"
   echo 1 > /sys/bus/pci/rescan
   sleep 1
 
   echo "loading nvidia kernel modules"
-  modprobe nvidia_uvm
-  modprobe nvidia_drm
-  modprobe nvidia_modeset
-  modprobe nvidia
-
-  echo "setting nvidia power/control auto"
-  echo 'auto' > /sys/bus/pci/devices/0000\:01\:00.0/power/control
-
-  echo "setting /etc/asus_nvidia"
-  touch /etc/asus_nvidia
+  modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
+  sleep 1
 
   echo "restarting display manager"
   systemctl restart display-manager.service

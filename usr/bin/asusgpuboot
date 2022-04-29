@@ -1,46 +1,10 @@
 #!/bin/bash
 
-GPUFILE=/etc/asus_nvidia
 GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
-GPUADDRESS="0000:01:00.0"
 
-if [ -d "/sys/bus/pci/devices/0000:01:00.0/" ]; then
-  echo "bla"
-fi;
-exit
-
-if [ -f $GPUFILE ]; then
-  echo "$GPUFILE exists."
-  
-  echo "activating and loading Nvidia"
-
-  if [ $GPUDISABLED = "1" ]; then
-    echo "asus-nb-wmi/dgpu_disable is set, enabling..."
-    echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-
-    sleep 30
-  fi;
-
-  modprobe nvidia_uvm
-  modprobe nvidia_drm
-  modprobe nvidia_modeset
-  modprobe nvidia
-
-  echo "setting nvidia power/control auto"
-  echo 'auto' > /sys/bus/pci/devices/0000\:01\:00.0/power/control
-else
-  echo "$GPUFILE does not exist."
-
-  echo "deactivating nvidia"
-
-  if [ $GPUDISABLED = "1" ]; then
-    echo "asus-nb-wmi/dgpu_disable is set, nothing to do..."
-  fi;
-
-  if [ -d "/sys/bus/pci/devices/$GPUADDRESS/" ]; then
-    echo "dGPU in device tree (shouldn't be), removing..."
-
-    echo "removing Nvidia from device tree"
-    echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
-  fi;
+if [ $GPUDISABLED = "1" ]; then
+  echo "asus-nb-wmi/dgpu_disable is set, nvidia blacklisted, nothing to do"
+else  
+  echo "asus-nb-wmi/dgpu_disable NOT is set, loading Nvidia drivers"
+  modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
 fi
