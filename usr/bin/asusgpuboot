@@ -18,3 +18,5 @@ else
   modprobe nvidia_drm
   modprobe nvidia_modeset
 fi
+
+exit 0

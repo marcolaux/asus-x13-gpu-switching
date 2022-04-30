@@ -49,3 +49,5 @@ else
   echo "restarting display manager"
   systemctl restart display-manager.service
 fi
+
+exit 0
