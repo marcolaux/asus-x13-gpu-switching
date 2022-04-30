@@ -40,7 +40,7 @@ else
   echo 1 > /sys/bus/pci/rescan
   
   echo "calling asus-nb-wmi/dgpu_disable 0 a second time..."
-  # It has to get called twice, after the rescan.
+  # It has to get called a second time, after the rescan.
   # Otherwise the dGPU does not autosuspend!
   echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
 
