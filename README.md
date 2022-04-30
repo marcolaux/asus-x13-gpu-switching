@@ -25,5 +25,5 @@ It has to get called twice with a PCI rescan inbetween - why that is I'm not sur
 - `sudo ./install` to install the scripts and services
 
 ### How to switch modes
-- `systemctl start asusgpuswitch` to switch between hybrid and integrated
+- `systemctl start asusgpuswitch` to switch between hybrid and integrated (**warning**: this will forcly log you out)
 - `cat /sys/devices/platform/asus-nb-wmi/dgpu_disable` tells you the current mode you are in (0 = hybrid + autosuspend, 1 = integrated + off)
