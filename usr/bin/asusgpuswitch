@@ -15,16 +15,16 @@ if [ $GPUDISABLED = "0" ]; then
   rmmod nvidia
   sleep 1
   
-  echo "calling asus-nb-wmi/dgpu_disable 1 for the first time..."
-  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-  
-  echo "rescanning PCI bus"
+  echo "calling asus-nb-wmi/dgpu_disable 1 for the first time and rescanning the PCI bus..."
+  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable &
+  sleep 1
   echo 1 > /sys/bus/pci/rescan
 
   echo "calling asus-nb-wmi/dgpu_disable 1 a second time..."
   # Not sure if it's nacessary, but as it's needed for enablement
   # purposes, let's also call it twise while disabling to be sure.
-  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
+  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable &
+  sleep 1
 
   echo "restarting display manager"
   systemctl restart display-manager.service
@@ -33,16 +33,16 @@ else
   systemctl stop display-manager.service
   sleep 5
 
-  echo "asus-nb-wmi/dgpu_disable is set, enabling..."
-  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-    
-  echo "rescanning PCI bus"
+  echo "asus-nb-wmi/dgpu_disable is set, enabling and rescanning the PCI bus..."
+  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable &
+  sleep 1
   echo 1 > /sys/bus/pci/rescan
   
   echo "calling asus-nb-wmi/dgpu_disable 0 a second time..."
   # It has to get called a second time, after the rescan.
   # Otherwise the dGPU does not autosuspend!
-  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
+  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable &
+  sleep 1
 
   echo "loading nvidia kernel modules"
   modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
