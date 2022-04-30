@@ -4,7 +4,17 @@ GPUDISABLED=$(cat /sys/devices/platform/asus-nb-wmi/dgpu_disable)
 
 if [ $GPUDISABLED = "1" ]; then
   echo "asus-nb-wmi/dgpu_disable is set, nvidia blacklisted, nothing to do"
+
+  if lsmod | grep "nvidia" &> /dev/null ; then
+    echo "nvidia is loaded, though (blacklisting not working?), removing..."
+    rmmod nvidia_uvm
+    rmmod nvidia_drm
+    rmmod nvidia_modeset
+    rmmod nvidia
+  fi
 else  
   echo "asus-nb-wmi/dgpu_disable NOT is set, loading Nvidia drivers"
   modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
+  modprobe nvidia_drm
+  modprobe nvidia_modeset
 fi

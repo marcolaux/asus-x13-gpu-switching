@@ -15,18 +15,14 @@ if [ $GPUDISABLED = "0" ]; then
   rmmod nvidia
   sleep 1
   
-  # no effect on dynamic power management later
-  # thought it might have when not "properly" removed
-  # echo 1 > /sys/devices/pci0000:00/0000:00:01.0/remove
-  # echo 1 > /sys/devices/pci0000:00/0000:00:01.1/remove
-  # sleep 1
-  
+  echo "calling asus-nb-wmi/dgpu_disable 1 for the first time..."
   echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-  sleep 1
-    
+  
   echo "rescanning bus"
   echo 1 > /sys/bus/pci/rescan
-  sleep 1
+
+  echo "calling asus-nb-wmi/dgpu_disable 1 a second time..."
+  echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
 
   echo "restarting display manager"
   systemctl restart display-manager.service
@@ -37,14 +33,17 @@ else
 
   echo "asus-nb-wmi/dgpu_disable is set, enabling..."
   echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
-  sleep 1
     
   echo "rescanning bus"
   echo 1 > /sys/bus/pci/rescan
-  sleep 1
+  
+  echo "calling asus-nb-wmi/dgpu_disable 0 a second time..."
+  echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
 
   echo "loading nvidia kernel modules"
   modprobe nvidia "NVreg_DynamicPowerManagement=0x02"
+  modprobe nvidia_drm
+  modprobe nvidia_modeset
   sleep 1
 
   echo "restarting display manager"
