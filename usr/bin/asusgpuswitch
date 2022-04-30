@@ -18,10 +18,12 @@ if [ $GPUDISABLED = "0" ]; then
   echo "calling asus-nb-wmi/dgpu_disable 1 for the first time..."
   echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
   
-  echo "rescanning bus"
+  echo "rescanning PCI bus"
   echo 1 > /sys/bus/pci/rescan
 
   echo "calling asus-nb-wmi/dgpu_disable 1 a second time..."
+  # Not sure if it's nacessary, but as it's needed for enablement
+  # purposes, let's also call it twise while disabling to be sure.
   echo 1 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
 
   echo "restarting display manager"
@@ -34,10 +36,12 @@ else
   echo "asus-nb-wmi/dgpu_disable is set, enabling..."
   echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
     
-  echo "rescanning bus"
+  echo "rescanning PCI bus"
   echo 1 > /sys/bus/pci/rescan
   
   echo "calling asus-nb-wmi/dgpu_disable 0 a second time..."
+  # It has to get called twice, after the rescan.
+  # Otherwise the dGPU does not autosuspend!
   echo 0 > /sys/devices/platform/asus-nb-wmi/dgpu_disable
 
   echo "loading nvidia kernel modules"
