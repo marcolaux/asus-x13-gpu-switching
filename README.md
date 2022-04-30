@@ -4,6 +4,19 @@ This is a draft on what works for the ASUS X13 to turn off the dGPU completely (
 
 I tested this with a 2021 G14 and it seems to work reliably.
 
+## Status X13
+
+While I thought that this might be a "proper" way to enable / disable the dGPU it never fully suspends on the X13 when the dGPU is active.
+Dynamic power management seems to work kind of but it never goes below 11W.
+
+When we have a look at the method of the main branch here, where we just remove the dPGU from the PCI bus it fully shuts down and either dGPU enabled or fully disabled does not make a difference in power consumption. On the X14 we can go down to 4.5W integrated and hybrid (main branch).
+
+Here we achieve 4.5W on integrated but only 11W on hybrid.
+
+In comparison with supergfxctl we get like 5W on integrated and 6.5W on hybrid.
+
+So by just removing and adding the dGPU from / to the PCI bus we seem to get the best results.
+
 ## Thoughts
 
 `supergfxctl` does not turn off the dGPU even though it is not in the PCI device tree after setting the mode to `integrated`
