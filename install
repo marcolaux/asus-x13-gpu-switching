@@ -2,5 +2,5 @@
 sudo systemctl disable asusgpuboot
 sudo cp etc/modprobe.d/asus-linux.conf /etc/modprobe.d/
 sudo cp etc/systemd/system/* /etc/systemd/system/
-sudo cp usr/local/bin/asus-x13-switching/* /usr/local/bin/asus-x13-switching/
+sudo cp usr/local/bin/* usr/local/bin/
 sudo systemctl enable asusgpuboot
