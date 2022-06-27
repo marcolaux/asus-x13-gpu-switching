@@ -4,4 +4,4 @@ Description=ASUS G14 GPU switch script...
 [Service]
 User=root
 Type=simple
-ExecStart=/usr/local/asus-x13-switching/asusgpuswitch
+ExecStart=/usr/local/bin/asus-x13-switching/asusgpuswitch
