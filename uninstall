@@ -2,4 +2,4 @@
 sudo systemctl disable asusgpuboot
 sudo rm /etc/modprobe.d/asus-linux.conf
 sudo rm /etc/systemd/system/asusgpu*
-sudo rm /usr/bin/asusgpu*
+sudo rm /usr/local/asusgpu*
